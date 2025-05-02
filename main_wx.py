@@ -1,0 +1,131 @@
+import wx
+
+class Win11SearchFrame(wx.Frame):
+    def __init__(self, parent=None, title="Windows 11 Search"):
+        super().__init__(parent, title=title, size=(800, 600))
+        self.SetBackgroundColour("#f0f0f0")
+        panel = wx.Panel(self)
+        main_sizer = wx.BoxSizer(wx.VERTICAL)
+        main_sizer.AddSpacer(32)
+        # 搜索框
+        search_panel = wx.Panel(panel)
+        search_panel.SetBackgroundColour("#ffffff")
+        search_panel.SetMinSize((0, 48))
+        search_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.search_ctrl = wx.TextCtrl(search_panel, style=wx.TE_PROCESS_ENTER)
+        self.search_ctrl.SetHint("在此键入以搜索")
+        font = self.search_ctrl.GetFont()
+        font.SetPointSize(13)
+        self.search_ctrl.SetFont(font)
+        search_sizer.Add(self.search_ctrl, 1, wx.ALL | wx.EXPAND, 10)
+        search_panel.SetSizer(search_sizer)
+        search_panel.SetWindowStyle(wx.BORDER_NONE)
+        main_sizer.Add(search_panel, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 32)
+        main_sizer.AddSpacer(18)
+        # 标签栏
+        tab_names = ["All", "Apps", "Documents", "Web", "More"]
+        self.notebook = wx.Notebook(panel, style=wx.NB_TOP)
+        self.pages = []
+        for name in tab_names:
+            page = wx.Panel(self.notebook)
+            self.notebook.AddPage(page, name)
+            self.pages.append(page)
+        main_sizer.Add(self.notebook, 1, wx.EXPAND | wx.LEFT | wx.RIGHT, 32)
+        main_sizer.AddSpacer(18)
+        panel.SetSizer(main_sizer)
+        # 填充各个页面
+        self.init_all_page(self.pages[0])
+        self.init_simple_page(self.pages[1], "Apps Page Content")
+        self.init_simple_page(self.pages[2], "Documents Page Content")
+        self.init_simple_page(self.pages[3], "Web Page Content")
+        self.init_simple_page(self.pages[4], "More Page Content")
+        self.Centre()
+
+    def init_all_page(self, page):
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        # Top apps 区域
+        top_apps_label = wx.StaticText(page, label="Top apps")
+        font = top_apps_label.GetFont()
+        font.SetPointSize(15)
+        font.SetWeight(wx.FONTWEIGHT_BOLD)
+        top_apps_label.SetFont(font)
+        sizer.Add(top_apps_label, 0, wx.TOP | wx.BOTTOM, 10)
+        apps = [
+            ("File Explorer", "#0078d4"),
+            ("Settings", "#50e6ff"),
+            ("Control Panel", "#8764b8"),
+            ("Microsoft Store", "#107c10"),
+            ("Groove Music", "#e81123")
+        ]
+        apps_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        for app_name, color in apps:
+            btn_panel = wx.Panel(page, size=(120, 120))
+            btn_panel.SetBackgroundColour("#ffffff")
+            btn_panel.SetMinSize((120, 120))
+            btn_sizer = wx.BoxSizer(wx.VERTICAL)
+            color_block = wx.Panel(btn_panel, size=(48, 48))
+            color_block.SetBackgroundColour(color)
+            color_block.SetMinSize((48, 48))
+            color_block.SetMaxSize((48, 48))
+            color_block.SetWindowStyle(wx.BORDER_SIMPLE)
+            btn_sizer.AddStretchSpacer(1)
+            btn_sizer.Add(color_block, 0, wx.ALIGN_CENTER | wx.BOTTOM, 8)
+            text = wx.StaticText(btn_panel, label=app_name)
+            text_font = text.GetFont()
+            text_font.SetPointSize(13)
+            text.SetFont(text_font)
+            btn_sizer.Add(text, 0, wx.ALIGN_CENTER)
+            btn_sizer.AddStretchSpacer(1)
+            btn_panel.SetSizer(btn_sizer)
+            apps_sizer.Add(btn_panel, 0, wx.ALL, 8)
+        apps_sizer.AddStretchSpacer(1)
+        sizer.Add(apps_sizer, 0, wx.EXPAND)
+        # Recent 区域
+        recent_label = wx.StaticText(page, label="Recent")
+        font2 = recent_label.GetFont()
+        font2.SetPointSize(14)
+        font2.SetWeight(wx.FONTWEIGHT_BOLD)
+        recent_label.SetFont(font2)
+        sizer.Add(recent_label, 0, wx.TOP | wx.BOTTOM, 12)
+        recent_items = ["Registry Editor", "Run", "Control Panel", "Windows PowerShell"]
+        recent_grid = wx.GridSizer(rows=2, cols=2, hgap=12, vgap=6)
+        for item in recent_items:
+            btn = wx.Button(page, label=item)
+            btn.SetBackgroundColour("#ffffff")
+            btn.SetMinSize((0, 32))
+            btn.SetFont(wx.Font(12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
+            recent_grid.Add(btn, 0, wx.EXPAND)
+        sizer.Add(recent_grid, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 0)
+        # Quick searches 区域
+        quick_label = wx.StaticText(page, label="Quick searches")
+        font3 = quick_label.GetFont()
+        font3.SetPointSize(14)
+        font3.SetWeight(wx.FONTWEIGHT_BOLD)
+        quick_label.SetFont(font3)
+        sizer.Add(quick_label, 0, wx.TOP | wx.BOTTOM, 12)
+        quick_items = ["Weather", "Top news", "Today in history", "Coronavirus tips"]
+        quick_grid = wx.GridSizer(rows=2, cols=2, hgap=12, vgap=6)
+        for item in quick_items:
+            btn = wx.Button(page, label=item)
+            btn.SetBackgroundColour("#ffffff")
+            btn.SetMinSize((0, 32))
+            btn.SetFont(wx.Font(12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL))
+            quick_grid.Add(btn, 0, wx.EXPAND)
+        sizer.Add(quick_grid, 0, wx.EXPAND | wx.LEFT | wx.RIGHT, 0)
+        sizer.AddStretchSpacer(1)
+        page.SetSizer(sizer)
+
+    def init_simple_page(self, page, text):
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        label = wx.StaticText(page, label=text)
+        font = label.GetFont()
+        font.SetPointSize(13)
+        label.SetFont(font)
+        sizer.Add(label, 0, wx.ALL | wx.ALIGN_CENTER, 20)
+        page.SetSizer(sizer)
+
+if __name__ == "__main__":
+    app = wx.App(False)
+    frame = Win11SearchFrame()
+    frame.Show()
+    app.MainLoop()
